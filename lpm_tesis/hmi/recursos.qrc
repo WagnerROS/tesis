@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>imagenes/espe.png</file>
+        <file>imagenes/tesis_render.jpeg</file>
+    </qresource>
+</RCC>
+

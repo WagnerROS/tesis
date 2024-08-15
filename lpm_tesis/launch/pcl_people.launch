@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Programa para copiar la imagen a una frecuencia de 1Hz -->
+  <node pkg="lpm_tesis" type="copy_data.py" name="copy_data" output="screen"/>
+  
+  <!-- Nodo de detección de personas -->
+  <node pkg="lpm_tesis" type="people_detection_node" name="people_detector" output="screen"/>
+  
+  <!-- Programa para generar la marca en RViz -->
+  <node pkg="lpm_tesis" type="marcador.py" name="marcador" output="screen"/>
+</launch>
+
