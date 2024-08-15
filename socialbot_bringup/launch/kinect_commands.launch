@@ -1,0 +1,13 @@
+<launch>
+
+    <!--Manipulating data from sonar sensors-->
+    <node pkg="socialbot_bringup" type="bridge_kinect.py" name="kinect_moves" output="screen">
+    <param name="target_angle_left" value="90.0" />
+    <param name="target_angle_rigth" value="-90.0" />
+    </node>
+
+    <node pkg="socialbot_bringup" type="cancel_goal.py" name="nav_cancel" output="screen"> 
+    </node>
+
+
+</launch>

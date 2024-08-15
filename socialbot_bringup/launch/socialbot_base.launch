@@ -1,0 +1,32 @@
+<launch>
+    
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find socialbot_description)/urdf/socialbot.urdf.xacro" />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="100.0"/>
+    </node>
+
+    <!-- IMU Relay and Filter -->
+    <include file="$(find socialbot_bringup)/launch/includes/imu/imu.launch" />
+
+    <!-- Publish Linorobot odometry -->
+    <node pkg="linorobot" name="lino_base_node" type="lino_base_node"></node>
+    
+    <!-- Odom-IMU Extended Kalman Filter-->
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> 
+        <remap from="odometry/filtered" to="odom" />
+        <rosparam command="load" file="$(find socialbot_bringup)/config/robot_localization.yaml" />
+    </node>
+
+    <!--Manipulating data from sonar sensors-->
+    <node pkg="socialbot_bringup" type="sonar_ring.py" name="sonar_ring" output="screen"> </node>
+
+    <!-- legdetector node -->  
+    <node pkg="leg_detector" type="leg_detector" name="leg_detector" args="scan:=/scan $(find leg_detector)/config/trained_leg_detector.yaml" respawn="true" output="screen">
+        <param name="fixed_frame" type="string" value="odom" />
+        <param name="scan" value="/scan" />
+        <param name="scan_frequency" value="6.9"/> 
+    </node>
+
+
+
+</launch>

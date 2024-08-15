@@ -1,0 +1,14 @@
+<launch>
+  <param name="model" value="waffle"/>
+
+  <!--Local teleoperation code-->
+  <node pkg="socialbot_bringup" type="socialbot_teleop.py" name="local_teleop"  output="screen">
+  </node>
+
+  <!--Phone teleop bridge node-->
+  <node pkg="socialbot_bringup" type="socialteleop.py" name="remote_teleop" output="screen"> </node>
+
+  <!--twist to mux node-->
+  <include file="$(find twist_mux)/launch/twist_mux.launch" />
+
+</launch>

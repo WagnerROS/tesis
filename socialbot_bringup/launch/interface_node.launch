@@ -1,0 +1,21 @@
+<launch>
+
+    <arg name="open_rviz" default="true"/>
+    
+    <!--Rosbridge server-->
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+    
+    <!--Camera connection with interface app-->
+    <include file="$(find socialbot_bringup)/launch/cameraviz.launch" />
+
+    <!--
+    <node pkg="web_video_server" type="web_video_server" name="web_video_server" required="true"
+          args="_port:=11315 "/>
+     -->
+
+    <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find socialbot_navigation)/rviz/socialbot_navigation.rviz"/>
+    </group>  
+
+</launch>

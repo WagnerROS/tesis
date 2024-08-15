@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch>
+
+    <!-- legdetector -->  
+    <node pkg="leg_detector" type="leg_detector" name="leg_detector" args="scan:=/scan $(find leg_detector)/config/trained_leg_detector.yaml" respawn="true" output="screen">
+        <param name="fixed_frame" type="string" value="odom" />
+        <param name="scan" value="/scan" />
+        <param name="scan_frequency" value="6.9"/> 
+    </node>
+
+    <!--Rosbridge server-->
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+    <include file="$(find twist_mux)/launch/twist_mux.launch" />
+    
+</launch>
+

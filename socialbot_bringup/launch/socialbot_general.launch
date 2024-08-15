@@ -1,0 +1,75 @@
+<launch>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find socialbot_description)/urdf/socialbot.urdf.xacro" />
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="40.0"/>
+  </node>
+
+  <rosparam param="base_width">0.358</rosparam>
+  <rosparam param="ticks_meter">650</rosparam>
+
+  <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" required="true">
+  </node>
+
+  <node pkg="socialbot_bringup" type="sonar_ring.py" name="sonar_ring" output="screen"> </node>
+
+  <node name="lpid_velocity" pkg="socialbot_bringup" type="pid_velocity.py" output="screen">
+      <remap from="wheel" to="lwheel"/>
+      <remap from="motor_cmd" to="left_wheel_speed"/>
+      <remap from="wheel_vtarget" to="lwheel_vtarget"/>
+      <remap from="wheel_vel" to="lwheel_vel"/>
+      <rosparam param="Kp">150</rosparam>
+      <rosparam param="Ki">180</rosparam>
+      <rosparam param="Kd">0</rosparam>
+      <rosparam param="out_min">-511</rosparam>
+      <rosparam param="out_max">511</rosparam>
+      <rosparam param="rate">40</rosparam>
+      <rosparam param="timeout_ticks">4</rosparam>
+      <rosparam param="rolling_pts">5</rosparam>
+
+  </node>
+
+  <node name="rpid_velocity" pkg="socialbot_bringup" type="pid_velocity.py" output="screen">
+      <remap from="wheel" to="rwheel"/>
+      <remap from="motor_cmd" to="right_wheel_speed"/>
+      <remap from="wheel_vtarget" to="rwheel_vtarget"/>
+      <remap from="wheel_vel" to="rwheel_vel"/>
+      <rosparam param="Kp">150</rosparam>
+      <rosparam param="Ki">180</rosparam>
+      <rosparam param="Kd">0</rosparam>
+      <rosparam param="out_min">-511</rosparam>
+      <rosparam param="out_max">511</rosparam>
+      <rosparam param="rate">40</rosparam>
+      <rosparam param="timeout_ticks">4</rosparam>
+      <rosparam param="rolling_pts">5</rosparam>
+ </node>
+
+ <node pkg="socialbot_bringup" type="diff_tf.py" name="diff_tf" output="screen">
+      <rosparam param="base_width">0.358</rosparam>
+      <rosparam param="ticks_meter">650</rosparam>
+      <rosparam param="rate">40</rosparam>
+      <remap from="odom0" to="odom0"/>
+ </node> 
+
+<node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" output="screen" respawn="true">
+<rosparam command="load" file="$(find socialbot_bringup)/config/ekf_template.yaml"/>
+<remap from="odometry/filtered" to="odom" />
+</node>
+
+ <node pkg="socialbot_bringup" type="twist_to_motors.py" name="twist_to_motors" output="screen">
+      <rosparam param="base_width">0.358</rosparam>
+      <rosparam param="ticks_meter">650</rosparam>
+      <rosparam param="rate">100</rosparam>
+ </node> 
+
+<!-- legdetector -->  
+<node pkg="leg_detector" type="leg_detector" name="leg_detector" args="scan:=/scan $(find leg_detector)/config/trained_leg_detector.yaml" respawn="true" output="screen">
+    <param name="fixed_frame" type="string" value="odom" />
+    <param name="scan" value="/scan" />
+    <param name="scan_frequency" value="6.9"/> 
+</node>
+
+<!--Rosbridge server-->
+<!--<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />-->
+<include file="$(find socialbot_bringup)/launch/cameraviz.launch" />
+<include file="$(find twist_mux)/launch/twist_mux.launch" />
+</launch>
